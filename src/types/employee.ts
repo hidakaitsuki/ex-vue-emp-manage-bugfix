@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 /**
  * 従業員情報を表すクラス.
  *
@@ -5,6 +7,7 @@
  * 従業員情報を表します。
  */
 export class Employee {
+  
   constructor(
     // ID
     private _id: number,
@@ -15,7 +18,7 @@ export class Employee {
     // 性別
     private _gender: string,
     // 入社日
-    private _hireDate: Date,
+    private _hireDate:  Date,
     // メールアドレス
     private _mailAddress: string,
     // 郵便番号
@@ -31,6 +34,11 @@ export class Employee {
     // 扶養人数
     private _dependentsCount: number
   ) {}
+
+  // 日付をyyyy年MM月dd日に変更する
+  public get formathiredate(): string {
+    return format(new Date(this.hireDate), "yyyy年MM月dd日");
+  }
 
   public get id(): number {
     return this._id;
