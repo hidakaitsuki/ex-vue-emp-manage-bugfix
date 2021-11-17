@@ -39,6 +39,10 @@ export class Employee {
   public get formathiredate(): string {
     return format(new Date(this.hireDate), "yyyy年MM月dd日");
   }
+  // 給料をカンマ区切りにする
+  public get formatsalary(): string {
+    return this._salary.toLocaleString()
+  }
 
   public get id(): number {
     return this._id;
