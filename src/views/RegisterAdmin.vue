@@ -3,7 +3,13 @@
     <div class="row register-page">
       <form class="col s12" id="reg-form">
         <div class="row">
+          <p v-if="lastNameError">※姓を入力してください</p>
+          <p v-if="firstNameError">※名を入力してください</p>
+          <p v-if="mailAddressError">※メールアドレスを入力してください</p>
+          <p v-if="passwordError">※パスワードを入力してください</p>
+
           <div class="input-field col s6">
+            <br />
             <input
               id="last_name"
               type="text"
@@ -14,6 +20,7 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
+            <br />
             <input
               id="first_name"
               type="text"
@@ -26,6 +33,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <br />
             <input
               id="email"
               type="email"
@@ -38,6 +46,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <br />
             <input
               id="password"
               type="password"
@@ -84,6 +93,14 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  // 姓が未入力のときのエラー
+  private firstNameError = false;
+  // 名が未入力のときのエラー
+  private lastNameError = false;
+  // メールアドレスが未入力のときのエラー
+  private mailAddressError = false;
+  // パスワードが未入力のときのエラー
+  private passwordError = false;
 
   /**
    * 管理者情報を登録する.
@@ -94,6 +111,33 @@ export default class RegisterAdmin extends Vue {
    */
   async registerAdmin(): Promise<void> {
     // 管理者登録処理
+
+    this.lastNameError = false;
+    this.firstNameError = false;
+    this.mailAddressError = false;
+    this.passwordError = false;
+
+    if (this.lastName == "") {
+      this.lastNameError = true;
+    }
+    if (this.firstName == "") {
+      this.firstNameError = true;
+    }
+    if (this.mailAddress == "") {
+      this.mailAddressError = true;
+    }
+    if (this.password == "") {
+      this.passwordError = true;
+    }
+    if (
+      this.lastNameError == true ||
+      this.firstNameError == true ||
+      this.mailAddressError == true ||
+      this.passwordError == true
+    ) {
+      return;
+    }
+
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
       name: this.lastName + " " + this.firstName,
       mailAddress: this.mailAddress,
@@ -101,7 +145,7 @@ export default class RegisterAdmin extends Vue {
     });
     console.dir("response:" + JSON.stringify(response));
 
-    this.$router.push("/employeeList");
+    this.$router.push("/loginAdmin");
   }
 }
 </script>
