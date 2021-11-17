@@ -7,6 +7,7 @@
           <p v-if="firstNameError">※名を入力してください</p>
           <p v-if="mailAddressError">※メールアドレスを入力してください</p>
           <p v-if="passwordError">※パスワードを入力してください</p>
+          <p v-if="checkPasswordError">※パスワードと確認用パスワードが異なります</p>
           <p v-if="mailDuplicateError">※登録できませんでした</p>
 
           <div class="input-field col s6">
@@ -60,6 +61,20 @@
           </div>
         </div>
         <div class="row">
+          <div class="input-field col s12">
+            <br />
+            <input
+              id="checkpassword"
+              type="password"
+              class="validate"
+              minlength="8"
+              v-model="checkPassword"
+              required
+            />
+            <label for="password">確認用パスワード</label>
+          </div>
+        </div>
+        <div class="row">
           <div class="input-field col s6">
             <button
               class="btn btn-large btn-register waves-effect waves-light"
@@ -94,6 +109,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  // 確認用パスワード
+  private checkPassword = "";
   // 姓が未入力のときのエラー
   private firstNameError = false;
   // 名が未入力のときのエラー
@@ -102,6 +119,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddressError = false;
   // パスワードが未入力のときのエラー
   private passwordError = false;
+  // パスワードと確認用パスワードが異なります
+  private checkPasswordError = false;
   // メールアドレスが重複しているときのエラー
   private mailDuplicateError = false;
 
@@ -119,7 +138,7 @@ export default class RegisterAdmin extends Vue {
     this.firstNameError = false;
     this.mailAddressError = false;
     this.passwordError = false;
-
+    this.checkPasswordError = false;
     if (this.lastName == "") {
       this.lastNameError = true;
     }
@@ -132,11 +151,15 @@ export default class RegisterAdmin extends Vue {
     if (this.password == "") {
       this.passwordError = true;
     }
+    if (this.password != this.checkPassword) {
+      this.checkPasswordError = true;
+    }
     if (
       this.lastNameError == true ||
       this.firstNameError == true ||
       this.mailAddressError == true ||
-      this.passwordError == true
+      this.passwordError == true ||
+      this.checkPasswordError == true
     ) {
       return;
     }
