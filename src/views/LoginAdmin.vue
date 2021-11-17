@@ -5,6 +5,7 @@
         <form class="login-form">
           <div class="row"></div>
           <div class="row">
+            <p v-if="mailAddressError">※ログインに失敗しました</p>
             <div class="input-field col s12">
               <i class="material-icons prefix">mail_outline</i>
               <input
@@ -65,6 +66,8 @@ export default class LoginAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  // メールアドレスが未入力のときのエラー
+  private mailAddressError = false;
 
   /**
    * ログインする.
@@ -78,6 +81,10 @@ export default class LoginAdmin extends Vue {
       mailAddress: this.mailAddress,
       password: this.password,
     });
+      if (response.data.status=="error") {
+        this.mailAddressError = true;
+        return;
+      }
     console.dir("response:" + JSON.stringify(response));
 
     // 従業員一覧に遷移する
