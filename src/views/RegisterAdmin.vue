@@ -8,6 +8,7 @@
           <p v-if="mailAddressError">※メールアドレスを入力してください</p>
           <p v-if="passwordError">※パスワードを入力してください</p>
           <p v-if="checkPasswordError">※パスワードと確認用パスワードが異なります</p>
+          <p v-if="mailDuplicateError">※登録できませんでした</p>
 
           <div class="input-field col s6">
             <br />
@@ -120,6 +121,9 @@ export default class RegisterAdmin extends Vue {
   private passwordError = false;
   // パスワードと確認用パスワードが異なります
   private checkPasswordError = false;
+  // メールアドレスが重複しているときのエラー
+  private mailDuplicateError = false;
+
   /**
    * 管理者情報を登録する.
    *
@@ -165,8 +169,11 @@ export default class RegisterAdmin extends Vue {
       mailAddress: this.mailAddress,
       password: this.password,
     });
+    if (response.data.status == "error") {
+      this.mailDuplicateError = true;
+      return;
+    }
     console.dir("response:" + JSON.stringify(response));
-
     this.$router.push("/loginAdmin");
   }
 }
