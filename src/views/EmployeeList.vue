@@ -18,7 +18,6 @@
             <th>扶養人数</th>
           </tr>
         </thead>
-
         <tbody>
           <tr v-for="employee of currentEmployeeList" v-bind:key="employee.id">
             <td>
@@ -32,12 +31,22 @@
         </tbody>
       </table>
     </div>
+    <div id="pagebutton">
+      <button
+        type="button"
+        v-for="page of pageArray"
+        v-bind:key="page"
+        @click="onPageBottunclick(page)"
+      >
+        {{ page }}
+      </button>
+    </div>
   </div>
 </template>
-
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Employee } from "@/types/employee";
+
 /**
  * 従業員一覧を表示する画面.
  */
@@ -47,7 +56,9 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
-
+  // ページ番号
+  private pageArray: Array<number> = [];
+  private displayEmployee: Array<Employee> = [];
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
    *
@@ -65,15 +76,37 @@ export default class EmployeeList extends Vue {
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
-  
+
+    //ページ数をボタンで表示する
+    let pagemaxnumber = Math.floor(this.currentEmployeeList.length / 10 + 1);
+    if (this.currentEmployeeList.length % 10 == 0) {
+      pagemaxnumber -= 1;
+    }
+    for (let i = 1; i <= pagemaxnumber; i++) {
+      this.pageArray.push(i);
+    }
+// 初期の従業員一覧
+    for (let i = 1; i <= 10; i++) {
+      this.displayEmployee.push(this.currentEmployeeList[i]);
+    }
+    this.currentEmployeeList = this.displayEmployee;
   }
   /**
    * 現在表示されている従業員一覧の数を返す.
    *
-   * @returns 現在表示されている従業員一覧の数
+   * @returns 全ての従業員一覧の数
    */
   get getEmployeeCount(): number {
-    return this.currentEmployeeList.length;
+    return this["$store"].getters.getAllEmployees.length;
+  }
+  /**
+   * ページ数のボタンを押したときに、10件ずつ表示する.
+   */
+  onPageBottunclick(page: number): void {
+    this.currentEmployeeList = this["$store"].getters.getAllEmployees.slice(
+      page * 10 - 10,
+      page * 10
+    );
   }
 }
 </script>
@@ -89,5 +122,8 @@ export default class EmployeeList extends Vue {
   display: block;
   width: 150px;
   margin: 0 auto;
+}
+#pagebutton {
+  text-align: center;
 }
 </style>
