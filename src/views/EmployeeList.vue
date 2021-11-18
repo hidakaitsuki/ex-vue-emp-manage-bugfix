@@ -9,7 +9,13 @@
       </div>
     </nav>
     <div>従業員数:{{ getEmployeeCount }}人</div>
-    <div class="row">
+    従業員名検索： <input type="text" v-model="keyword" />
+    <button type="button" v-on:click="searchEmployee()">
+      検索
+    </button>
+    <p v-if="searuchError">１件もありませんでしたので全件表示します</p>
+    <div></div>
+    <div class="rosw">
       <table class="striped">
         <thead>
           <tr>
@@ -47,6 +53,10 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
+  // 検索された従業員名
+  private keyword = "";
+  // 従業員名が存在しないときのエラー
+  private searuchError = false;
 
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
@@ -74,6 +84,22 @@ export default class EmployeeList extends Vue {
    */
   get getEmployeeCount(): number {
     return this.currentEmployeeList.length;
+  }
+  /**
+   * 従業員名を検索して、検索された文字列を含む従業員を返す.
+   * @returns 検索された従業員情報
+   *
+   * */
+  searchEmployee(): Array<Employee> {
+    this.searuchError = false;
+    this.currentEmployeeList = this.currentEmployeeList.filter((employee) =>
+      employee.name.match(this.keyword)
+    );
+    if (this.currentEmployeeList.length == 0) {
+      this.currentEmployeeList = this.$store.getters.getAllEmployees;
+      this.searuchError = true;
+    }
+    return this.currentEmployeeList;
   }
 }
 </script>
