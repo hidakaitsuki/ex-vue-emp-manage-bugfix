@@ -14,6 +14,7 @@ export class Administrator {
     private _mailAddress: string,
     // パスワード
     private _password: string
+  
   ) {}
 
   public get id(): number {
