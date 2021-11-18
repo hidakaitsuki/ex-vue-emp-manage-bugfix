@@ -53,6 +53,7 @@ export default new Vuex.Store({
       state.employees = new Array<Employee>();
       // 今回EmployeeオブジェクトのformatHireDateメソッドを
       // 使用するため、Employeeオブジェクトの配列に変換する必要あり
+     
       for (const employee of payload.employees) {
         state.employees.push(
           new Employee(
@@ -71,6 +72,10 @@ export default new Vuex.Store({
           )
         );
       }
+      // 降順に並び替える
+      state.employees.sort(function(a, b) {
+        return a.hireDate > b.hireDate ? -1 : 1;
+      });
     },
   }, // end mutations
   getters: {
