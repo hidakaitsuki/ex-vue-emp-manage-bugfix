@@ -36,7 +36,7 @@
             </tr>
             <tr>
               <th nowrap>入社日</th>
-              <td><span>{{currentEmployee.hireDate}}</span></td>
+              <td><span>{{currentEmployee.formathiredate}}</span></td>
             </tr>
             <tr>
               <th nowrap>メールアドレス</th>
@@ -146,15 +146,34 @@ export default class EmployeeDetail extends Vue {
    * Vuexストア内のGetterを呼ぶ。
    * ライフサイクルフックのcreatedイベント利用
    */
-  created(): void {
+  async created(): Promise<void> {
     // 送られてきたリクエストパラメータのidをnumberに変換して取得する
     const employeeId = parseInt(this.$route.params.id);
+    // 更新しても表示されるように、それぞれの詳細画面のAPIを取得
+    const response = await axios.get(
+      `http://153.127.48.168:8080/ex-emp-api/employee/${employeeId}`
+    );
 
-    // VuexストアのGetter、getEmployeeById()メソッドに先ほど取得したIDを渡し、１件の従業員情報を取得し、戻り値をcurrentEmployee属性に代入する
-    this.currentEmployee = this.$store.getters.getEmployeeById(employeeId);
+    console.dir(JSON.stringify(response));
+    // APIから取得したJson形式のデータをEmployee型にする
+    this.currentEmployee = new Employee(
+      response.data.employee.id,
+      response.data.employee.name,
+      response.data.employee.age,
+      response.data.employee.gender,
+      response.data.employee.hireDate,
+      response.data.employee.mailAddress,
+      response.data.employee.zipCode,
+      response.data.employee.address,
+      response.data.employee.telephone,
+      response.data.employee.salary,
+      response.data.employee.characteristics,
+      response.data.employee.dependentsCount
+    );
 
     // 今取得した従業員情報から画像パスを取り出し、imgディレクトリの名前を前に付与(文字列連結)してcurrentEmployeeImage属性に代入する
-    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${this.currentEmployee.image}`;
+    this.currentEmployeeImage = `http://153.127.48.168:8080/ex-emp-api/img/${response.data.employee.image}`;
+    
 
     // 今取得した従業員情報から扶養人数を取り出し、currentDependentsCount属性に代入する
     this.currentDependentsCount = this.currentEmployee.dependentsCount;
